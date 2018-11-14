@@ -34,10 +34,9 @@ class Parser {
                     break
                 } else {
                     result += Integer.parseInt(tokenList.get(x + 1).value.toString())
+                    x++
                 }
-            }
-
-            if (currentToken.type == TokenType.INTEGER) {
+            } else if (currentToken.type == TokenType.INTEGER) {
                 result += Integer.parseInt(currentToken.value.toString())
             }
 
@@ -56,6 +55,11 @@ class Parser {
 class Interpreter(var text: String) {
     var currentPosition = 0
     fun getCurrentToken(): Token {
+        var currentToken = Token(TokenType.END_OF_FILE, null)
+
+        if(currentPosition >= text.length) {
+            return currentToken
+        }
         val currentCharacter = text.get(currentPosition)
 
         while (currentCharacter.isWhitespace()) {
@@ -63,19 +67,19 @@ class Interpreter(var text: String) {
         }
 
         if (currentCharacter.isDigit()) {
-            return Token(TokenType.INTEGER, currentCharacter)
+            currentToken = Token(TokenType.INTEGER, currentCharacter)
         }
 
         if (currentCharacter.equals('+')) {
-            return Token(TokenType.PLUS, currentCharacter)
+            currentToken = Token(TokenType.PLUS, currentCharacter)
         }
 
         if (currentCharacter.equals('-')) {
-            return Token(TokenType.MINUS, currentCharacter)
+            currentToken = Token(TokenType.MINUS, currentCharacter)
         }
         currentPosition++
 
-        return Token(TokenType.END_OF_FILE, null)
+        return currentToken
     }
 
     private fun skipWhitespace() {
